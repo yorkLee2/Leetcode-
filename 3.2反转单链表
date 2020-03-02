@@ -6,18 +6,38 @@
 
 #分析
 
-class Solution:
-    def reverseList(self, head: ListNode) -> ListNode:
+#Python 链表
+https://www.cnblogs.com/king-ding/p/pythonchaintable.html
+class Node:
+    '''
+    data: 节点保存的数据
+    _next: 保存下一个节点对象
+    '''
+    def __init__(self, data, pnext=None):
+        self.data = data
+        self._next = pnext
 
-        # write code here
-        if head == None or head.next == None:
-            return head  
-        cur = head 
-        tmp = None
-        newhead = None  
-        while cur:  
-            tmp = cur.next   
-            cur.next = newhead  
-            newhead = cur
-            cur = tmp  
-        return newhead
+    def __repr__(self):
+        '''
+        用来定义Node的字符输出，
+        print为输出data
+        '''
+        return str(self.data)
+
+Ans: 递归解法
+
+
+class Solution:
+    def reverseList(self, head):
+        if not head or not head.next:
+            return head          #首先判断链表是否为空或者指向下一个为空，若为空直接返回
+        Node = None
+        #初始化结点
+      
+        while head:
+            p = head
+            head = head.next           
+            p.next = Node
+            Node = p
+        return Node
+
