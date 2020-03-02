@@ -9,6 +9,20 @@
 输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
 输出：[1,2,3,4,8,12,11,10,9,5,6,7]
 
+Tip1:
+python 中的 [:-1] 和 [::-1]
+a='python'
+b=a[::-1]
+print(b) #nohtyp                        #倒序列表
+c=a[::-2]
+print(c) #nhy
+#从后往前数的话，最后一个位置为-1
+d=a[:-1]  #从位置0到位置-1之前的数
+print(d)  #pytho
+e=a[:-2]  #从位置0到位置-2之前的数
+print(e)  #pyth
+
+Tip2:
 #Zip:
 x = [1, 2, 3]
 y = [4, 5, 6]
@@ -18,15 +32,17 @@ print xyz
 
 [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
 
-
+Tip3:
+python中pop()用于移除列表中的一个元素（默认是最后一个元素，并且返回该元素的值）
+pop(0)   则移除第一个列表
 
 #分析 先向右：1,2,3；向下：6,9；向左：8,7； 向上：4,5
 #输入第一行→删除第一行，逆时针旋转（倒置+逆序实现）
 class Solution:
     def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
-        result = []
+        result = []                                     #
         while matrix:
-            result += matrix.pop(0)
+            result += matrix.pop(0)                     #先将第一行加入列表
             matrix = list(zip(*matrix))[::-1]
         return result
 
