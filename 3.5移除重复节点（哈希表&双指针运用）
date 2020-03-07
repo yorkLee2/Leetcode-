@@ -6,3 +6,26 @@ Example1:
 Example2:
  Input: [1, 1, 1, 1, 2]
  Output: [1, 2]
+
+#分析：运用set/dict哈希表的特点，包括set不带有重复值
+#1.通过first指针循环遍历链表，直到first的值为Null
+#2.在循环过程中，如果值不存在set中，加入set，pre指向对应first指针节点；
+   如果存在，则指向下一个first的节点
+   最终返回head
+ class Solution:
+    def removeDuplicateNodes(self, head: ListNode) -> ListNode:
+        if not head or not head.next:
+            return head            
+        s = set()   
+        first = head
+        pre = head
+        while first:         #通过first指针循环遍历链表，直到first的值为Null    
+            if first.val in s:
+                pre.next = first.next
+            else:
+                pre = first
+                s.add(first.val)
+
+            first = first.next   #通过first指针循环遍历链表，直到first的值为Null
+
+        return head    
