@@ -1,0 +1,74 @@
+#1.反转字符串
+#2.反转单词：  给定一个字符串，你需要反转字符串中每个单词的字符顺序，同时仍保留空格和单词的初始顺序。
+              输入: "Let's take LeetCode contest"
+              输出: "s'teL ekat edoCteeL tsetnoc" 
+注意：在字符串中，每个单词由单个空格分隔，并且字符串中不会有任何额外的空格。
+
+双指针法：
+   双指针法是使用两个指针，
+   一个左指针 left，右指针 right，开始工作时 left 指向首元素，right 指向尾元素。
+   交换两个指针指向的元素，并向中间移动，直到两个指针相遇。
+
+将 left 指向首元素，right 指向尾元素。
+当 left<right：
+交换 s[left] 和 s[right]。
+left++
+right--
+
+##hello: oellh→ olleh→ o
+
+class Solution:
+    def reverseString(self, s):
+        left, right = 0, len(s) - 1
+        while left < right:
+            s[left], s[right] = s[right], s[left]
+            left, right = left + 1, right - 1
+            
+class Solution:
+    def reverseWords(self, s: str) -> str:
+        return ' '.join(s.split(' ')[::-1])[::-1]
+
+
+############################################################
+切片
+
+
+第一个数字表示切片的开始位置（默认为0）
+第二个数字表示切片的截止（但不包含）位置
+默认为列表长度
+第三个数字表示切片的步长（默认为1）
+
+aList=[3, 4, 5, 6, 7, 9, 11,13,15,17]
+aList[: :]  //返回包含原列表中所有元素的逆序列表
+aList[::-1]
+
+使用切片对列表元素进行增，删，改
+可以使用切片操作来实现很多目的，并不影响列表对象的内存地址
+
+aList=[3,5,7]
+aList[len(alist):]
+
+aList[len(alist):]=[9]
+aList
+>>[3,5,7,9]
+
+aList[:3]=[1,2,3]
+aList
+>>[1,2,3,9]
+
+aList[:3]=[]
+aList
+[9]
+
+通过列表对象的方法原地增加元素，会影响；直接修改下标的元素值，不影响
+x=[[1],[2],[3]]
+y=x[:]
+y=x
+
+y[0]=[4]
+y=[[4] [2] [3]
+
+y[1].append(5)
+x=[[1],[2,5],[3]]
+        
+        
