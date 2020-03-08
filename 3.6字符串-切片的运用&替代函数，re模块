@@ -54,6 +54,8 @@ class Solution:
 平衡字符串：
 在一个「平衡字符串」中，'L' 和 'R' 字符的数量是相同的。给出一个平衡字符串 s，请你将它分割成尽可能多的平衡字符串。
 返回可以通过分割得到的平衡字符串的最大数量。
+###此题表示不准确，可忽略不计
+
 
 示例 1：
 input：s = "RLRRLLRLRL"
@@ -70,6 +72,23 @@ output：4
 输出：1
 解释：s 只能保持原样 "LLLLRRRR".
 
-
+class Solution:
+    def balancedStringSplit(self, s: str) -> int:
+        """
+        :type s: str
+        :rtype: int
+        """
+        count = 0
+        count_L = 0
+        count_R = 0
+        
+        for s_ in s:
+            if s_ == 'L':
+                count_L += 1
+            else:
+                count_R += 1
+            if count_L == count_R:
+                count += 1
+        return count
 
 
