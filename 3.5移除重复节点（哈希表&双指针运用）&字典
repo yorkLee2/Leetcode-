@@ -7,6 +7,74 @@ Example2:
  Input: [1, 1, 1, 1, 2]
  Output: [1, 2]
  
+字典：
+d=dict(name:'dong',age=37)
+
+#字典的创建
+# a=list()
+# print(a)
+
+# dic={'name':'alex'}
+
+# dic1={}
+# dic2=dict((('name','alex'),))
+# print(dic2)
+
+# dic3=dict([['name','alex'],])
+# print(dic3)
+
+aDict['age']=38   //修改
+aDict['address']='SDIBT'  //添加新元素
+
+1.add   
+dict={'name':'alex}    dict1['age']=18
+
+2.setdefault
+#键存在的话，不改动，返回字典中相应的键对应的值。
+#键不存在，在字典中增加新的键值对，并返回相应的值。
+aDict.setfault('address','SDIBT')  //增加新元素
+3.search（通过对应的键查询）
+item 返回字典中的元素，即所有键；
+keys（）方法返回所有键，
+value（）返回所有值。
+# dic3={'age': 18, 'name': 'alex', 'hobby': 'girl'}
+# print(dic3['name'])
+# print(list(dic3.keys()))
+# print(list(dic3.values()))
+# print(list(dic3.items()))
+
+# dic5 = {'name': 'alex', 'age': 18, 'class': 1}
+# del dic5['name'] #删除字典中指定键值对
+# print(dic5)
+# print(dic5.pop('age')) #删除字典中指定键值对，并返回该键值对的值
+# ret=dic5.pop('age')
+# print(ret)
+# print(dic5)
+# a = dic5.popitem() #随机删除某组键值对，并以元组方式返回值
+# print(a, dic5)
+# del dic5        #删除整个字典
+# print(dic5)
+
+
+
+排序：按照键
+dic={5:'555',2:'666',4:'444'}
+# dic.has_keys(5)
+# print(5 in dic)
+# print(sorted(dic.items()))
+# dic5={'name': 'alex', 'age': 18}
+
+遍历：
+# for i in dic5:
+#     print(i,dic5[i])   //遍历较好的方法
+
+# for i,v in dic5.items():
+#     print(i,v)
+存个人信息非常方便的
+
+
+
+
 和list比较，dict有以下几个特点：
 查找和插入的速度极快，不会随着key的增加而增加；
 需要占用大量的内存，内存浪费多。
