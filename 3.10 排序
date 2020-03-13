@@ -1,0 +1,13 @@
+#####################sorted 函数
+
+
+
+
+给定两个字符串 s1 和 s2，请编写一个程序，确定其中一个字符串的字符重新排列后，能否变成另一个字符串。
+
+输入: s1 = "abc", s2 = "bca"      输出: true 
+输入: s1 = "abc", s2 = "bad"      输出: false
+
+class Solution:
+    def CheckPermutation(self, s1: str, s2: str) -> bool:
+        return sorted(s1)==sorted(s2)
