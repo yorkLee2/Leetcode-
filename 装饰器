@@ -1,0 +1,36 @@
+装饰器本质上是Pyhon函数，可以让其他函数在不需要做任何代码变动情况下增加额外功能
+装饰器的返回值是一个函数对象，经常用于切片需求的场景.
+       插入日志，性能测试，事务处理，缓存，权限校验等场景。
+       可以抽离出大量与函数功能本身无关的雷同代码并继续重用。
+    应用场景：
+            京东每次的验证会员用户界面
+
+For instance:
+
+import datetime
+
+def hel(func):
+    def inner():
+        print('hello')
+        r = func()
+        print(datetime.datetime.now())
+        print('end')
+        return r
+    return inner
+
+@hel
+def f1():
+    print('proces a')
+@hel
+def f2():
+    print('proces b')
+@hel
+def f3():
+    print('proces c')
+@hel
+def f4():
+    print('proces d')
+
+f1()
+f2()
+f3()
