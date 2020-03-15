@@ -10,30 +10,17 @@ Example2:
 字典：
 d=dict(name:'dong',age=37)
 
-#字典的创建
-# a=list()
-# print(a)
+1.字典的创建
+# a=list()   print(a)     dic={'name':'alex'}
+2.字典的修改
+aDict['age']=38   //修改    aDict['address']='SDIBT'  //添加新元素
 
-# dic={'name':'alex'}
-
-# dic1={}
-# dic2=dict((('name','alex'),))
-# print(dic2)
-
-# dic3=dict([['name','alex'],])
-# print(dic3)
-
-aDict['age']=38   //修改
-aDict['address']='SDIBT'  //添加新元素
-
-1.add   
-dict={'name':'alex}    dict1['age']=18
-
-2.setdefault
+3.setdefault
 #键存在的话，不改动，返回字典中相应的键对应的值。
 #键不存在，在字典中增加新的键值对，并返回相应的值。
 aDict.setfault('address','SDIBT')  //增加新元素
-3.search（通过对应的键查询）
+
+4.search（通过对应的键查询）
 item 返回字典中的元素，即所有键；
 keys（）方法返回所有键，
 value（）返回所有值。
@@ -54,15 +41,6 @@ value（）返回所有值。
 # print(a, dic5)
 # del dic5        #删除整个字典
 # print(dic5)
-
-
-
-排序：按照键
-dic={5:'555',2:'666',4:'444'}
-# dic.has_keys(5)
-# print(5 in dic)
-# print(sorted(dic.items()))
-# dic5={'name': 'alex', 'age': 18}
 
 遍历：
 # for i in dic5:
