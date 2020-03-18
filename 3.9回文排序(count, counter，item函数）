@@ -88,4 +88,26 @@ if __name__ == '__main__':
     print(solution.canPermutePalindrome(s))
 
 
+给定一个非空字符串 s，最多删除一个字符。判断是否能成为回文字符串。
+   输入: "aba"      输出: True
+   输入: "abca"     输出: True        解释: 你可以删除c字符
+
+分析：
+python中判断回文数非常的容易，只需一条代码。【所谓的回文字符串，是指具有左右对称特点的字符串】   即：a[::-1] == a 这里a是一个字符串。
+利用双指针进行判断，当存在首尾字符不相等的时候，试着删除首部或尾部一个字符再进行判断是否是回文数。
+
+class Solution(object):
+    def validPalindrome(self, s):
+        p1, p2 = 0, len(s) - 1
+        while p1 < p2:
+            if s[p1] != s[p2]:
+                # 舍弃左字符
+                a = s[p1 + 1: p2 + 1]
+                # 舍弃右字符
+                b = s[p1:p2]
+                # 判断是否为回文字符串
+                return a[::-1] == a or b[::-1] == b
+            p1 += 1
+            p2 -= 1
+        return True
 
