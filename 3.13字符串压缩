@@ -1,0 +1,44 @@
+字符串压缩。利用字符重复出现的次数，编写一种方法，实现基本的字符串压缩功能。比如，字符串aabcccccaaa会变为a2b1c5a3。
+若“压缩”后的字符串没有变短，则返回原先的字符串。你可以假设字符串中只包含大小写英文字母（a至z）。
+
+输入："aabcccccaaa"   输出："a2b1c5a3"
+
+############双指针
+class Solution:
+    def compressString(self, S: str) -> str:
+      n = len(S)               #定义字符串长度
+      result = ''              #结果初始化
+      i = 0                    #i对应指针0，计数不重复的字符
+      while i < n:
+        j = i
+        while j < n and S[j] == S[i]:  #如果j在范围内且j指向的与i指向的相同
+            j += 1
+        result += S[i] + str(j - i)  # a+2
+        i = j
+      if len(res) < len(S):
+        return res
+      else:
+        return S
+      
+ if __name__ == '__main__':
+    S = 'aabcccccaa'
+    solution = Solution()
+    print(solution.compressString(S))
+    
+
+
+
+########这个写法大逻辑没问题，但是边界有问题s[i-1],s[i]
+class Solution:
+    def compressString(self, S: str) -> str:
+        S += '-'
+        cnt, n, encoded = 1, len(S),  ""
+        
+        for i in range(1, n):
+            if S[i] == S[i - 1]:
+                cnt += 1
+            else:
+                encoded += S[i - 1] + str(cnt)
+                cnt = 1
+
+        return S[:-1] if len(encoded) >= n - 1 else encoded
