@@ -1,0 +1,88 @@
+################################   min()方法
+min() 方法返回给定参数的最小值，参数可以为序列       min( x, y, z, .... )
+print "min(80, 100, 1000) : ", min(80, 100, 1000)
+
+
+
+1.“气球” 的最大数量
+   给你一个字符串 text，你需要使用 text 中的字母来拼凑尽可能多的单词 "balloon"（气球）。
+字符串 text 中的每个字母最多只能被使用一次。请你返回最多可以拼凑出多少个单词 "balloon"。
+输入：text = "nlaebolko"
+输出：1
+
+#分析：本质上寻找/遍历ballon各个单词，统计→输出符合的最小的
+
+class Solution:
+    def maxNumberOfBalloons(self, text: str) -> int:
+        num_b = 0
+        num_a = 0
+        num_l = 0
+        num_o = 0
+        num_n = 0
+        for s in text:
+            if s == 'b':
+                num_b += 1
+            elif s == 'a':
+                num_a += 1
+            elif s == 'l':
+                num_l += 1
+            elif s == 'o':
+                num_o += 1
+            elif s == 'n':
+                num_n += 1
+        return min(num_b, num_a, num_l // 2, num_o // 2, num_n)
+ 
+ 2. 比较字符串最小字母出现频次
+我们来定义一个函数 f(s)，其中传入参数 s 是一个非空字符串；该函数的功能是统计 s  中（按字典序比较）最小字母的出现频次。
+例如，若 s = "dcce"，那么 f(s) = 2，因为最小的字母是 "c"，它出现了 2 次。
+现在，给你两个字符串数组待查表 queries 和词汇表 words，请你返回一个整数数组 answer 作为答案，
+其中每个 answer[i] 是满足 f(queries[i]) < f(W) 的词的数目，W 是词汇表 words 中的词。
+
+Input：queries = ["cbd"], words = ["zaaaz"]     Output：[1]
+解释：查询 f("cbd") = 1，而 f("zaaaz") = 3 所以 f("cbd") < f("zaaaz")。
+
+Input：queries = ["bbb","cc"], words = ["a","aa","aaa","aaaa"]     Output：[1,2]
+解释：第一个查询 f("bbb") < f("aaaa")，第二个查询 f("aaa") 和 f("aaaa") 都 > f("cc")。
+
+#分析各遍历queries, words查询最小的字符数量→比较
+class Solution:
+    def numSmallerByFrequency(self, queries: List[str], words: List[str]) -> List[int]:
+        output = [ ]
+        queries_count= []
+        words_count = []
+        words_count = [word.count(min(word)) for word in words] 
+        #word_count统计 words 中每个字符串最小字母出现的频次
+        for query in queries:
+            c = query.count(min(query))
+            # 在 words_count 里数一下有多少是比 c 大的
+            output.append(len([x for x in words_count if c < x]))
+        return output
+
+
+######################注意区别
+words=['cbd','aabbccc']
+word_count = [word.count(min(word)) for word in words]
+print(word_count)   
+输出： [1,2]
+
+words=['cbd','aabbccc']
+#word_count = [word.count(min(word)) for word in words]
+for word in words:
+     word_count=word.count(min(word))
+print(word_count)
+输出 2
+
+words=['cbd','aabbccc']
+#word_count = [word.count(min(word)) for word in words]
+for word in words:
+     word_count=word.count(min(word))
+     print(word_count)
+输出 1
+     2
+
+     
+
+
+
+        
+        
