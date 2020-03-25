@@ -1,0 +1,107 @@
+#######################append函数
+append()函数用于在列表末尾添加新的对象。
+
+#list = ['abc','Harden','python','Curry',123];  list.append(2009);  print('list(updated):',list)
+#输出  ['abc','Harden','python','Curry',123,2009]
+
+#####################sorted 函数
+list.sort( key=None, reverse=False)
+reverse -- 排序规则，reverse = True 降序， reverse = False 升序（默认）
+
+
+该函数也含有reverse这个bool类型的参数，当reverse=False时：为正向排序(从小到大)；当reverse=True时：为反向排序(从大到小)。当然默认为False。
+执行完后会有返回一个新排序好的list
+
+sorted()不会改变原来的list，而是会返回一个新的已经排序好的list
+list.sort()方法仅仅被list所定义，sorted()可用于任何一个可迭代对象
+
+1.给定两个字符串 s1 和 s2，请编写一个程序，确定其中一个字符串的字符重新排列后，能否变成另一个字符串。
+
+输入: s1 = "abc", s2 = "bca"      输出: true 
+输入: s1 = "abc", s2 = "bad"      输出: false
+
+2.给定两个字符串 s 和 t ，编写一个函数来判断 t 是否是 s 的字母异位词。
+
+示例 1:
+输入: s = "anagram", t = "nagaram"            输出: true
+
+示例 2:
+输入: s = "rat", t = "car"                   输出: false
+tip:
+根据题目的意思，字母异位词是指由相同的字母按照不同的顺序组成的单词，根据此含义，那么这两个单词的长度也一定相等，
+所以我们就可以先将两个单词按照字母的大小进行排序，然后比较两个单词对应位置上的字母是否相等
+
+
+class Solution:
+    def CheckPermutation(self, s1: str, s2: str) -> bool:
+        return sorted(s1)==sorted(s2)
+
+
+给定两个数组，编写一个函数来计算它们的交集
+输入: nums1 = [1,2,2,1], nums2 = [2,2]
+输出: [2,2]
+
+
+分析：先排序→后双指针比较:对应元素相同，加入到新的列表，不同：
+[1,1,2,2]  [2,2]
+
+
+def intersect(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        nums1.sort()
+        nums2.sort()
+        r = []
+        i = j = 0
+        while i < len(nums1) and j < len(nums2):
+            if nums1[i] == nums2[j]:
+                r.append(nums1[i])
+                i += 1
+                j += 1
+            elif nums1[i] < nums2[j]:
+                i += 1
+            else:
+                j += 1
+        return r
+
+
+给定一个非负整数数组 A， A 中一半整数是奇数，一半整数是偶数。
+对数组进行排序，以便当 A[i] 为奇数时，i 也是奇数；当 A[i] 为偶数时， i 也是偶数。
+      你可以返回任何满足上述条件的数组作为答案。
+
+输入：[4,2,5,7]    输出：[4,5,2,7]     解释：[4,7,2,5]，[2,5,4,7]，[2,7,4,5] 也会被接受。
+
+#双指针：
+class Solution:
+    def sortArrayByParityII(self, A: List[int]) -> List[int]:
+        even=0   #双指针分别代表偶数位，奇数位
+        odd=1 
+        while odd < len(A) and even < len(A):
+            if A[odd] % 2 == 0 and A[even] % 2 == 1:
+            #分类讨论: 1.如果偶数位是奇数，奇数位是偶数，交换数值
+            #  指针分别+2,移动
+                A[odd], A[even] = A[even], A[odd]
+                even += 2  
+                odd += 2
+            #2.如果偶数位是偶数，奇数位是奇数，偶数指针+2移动    
+            elif A[odd] % 2 == 1:
+                odd += 2
+            #3.如果偶数位是偶数，奇数位是偶数，奇数位指针+2    
+            elif A[odd] % 2 == 0:
+                even += 2        
+        return A
+
+#这个elif查一下，到底是否定哪些
+
+给定由一些正数（代表长度）组成的数组 A，返回由其中三个长度组成的、面积不为零的三角形的最大周长。
+如果不能形成任何面积不为零的三角形，返回 0。
+输入：[2,1,2]   输出：5
+输入：[3,6,2,3]   输出：8
+
+#分析： 先排序→取最大三个（遍历实现）→返回三个的和
+class Solution:
+    def largestPerimeter(self, A: List[int]) -> int:
+        A.sort(reverse=True)
+        #复制问题 如果定义B=A.sort(reverse=True),object没有返回值
+        for i in range(len(A) -2):
+            if A[i+2]+A[i+1] > A[i]:
+                return A[i]+A[i+1]+A[i+2]
+        return 0
