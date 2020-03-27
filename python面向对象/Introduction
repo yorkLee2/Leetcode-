@@ -1,0 +1,153 @@
+1. 写重复代码是非常不好的低级行为
+2. 你写的代码需要经常变更
+其实 OOP 编程的主要作用也是使你的代码修改和扩展变的更容易，函数编程与 OOP 的主要区别就是 OOP 可以使程序更加容易扩展和易更改。
+划分对象→抽象类→将类组织成为层次化结构(继承和合成) →用类与实例进行设计和实现几个阶段
+
+Python：函数式+面向对象
+Python 中一切内容都可以成为对象，函数也是对象
+数据成员和成员方法统称为类的对象
+
+Python 支持多继承，如果父类中相同的方法名，而在子类使用时没有
+类成员：
+ # 字段
+ - 普通字段，保存在对象中，执行只能通过对象访问
+ - 静态字段，保存在类中， 执行 可以通过对象访问 也可以通过类访问
+ # 方法
+ - 普通方法，保存在类中，由对象来调用，self=》对象
+ - 静态方法，保存在类中，由类直接调用
+ - 类方法，保存在类中，由类直接调用，cls=》当前类
+ ######## 应用场景：
+ 如果对象中需要保存一些值，执行某功能时，需要使用对象中的值 －＞ 普通
+方法 不需要任何对象中的值，静态方法
+
+ # 属性，特性
+ - 不伦不类
+构造函数
+普通实例方法
+修饰器，声明类的方法
+修饰器，声明静态方法
+Python 继承方法实例
+class Animal:
+ def eat(self):
+ print "%s 吃 " %self.name
+ def drink(self):
+ print "%s 喝 " %self.name
+ def shit(self):
+ print "%s 拉 " %self.name
+ def pee(self):
+ print "%s 撒 " %self.name
+class Cat(Animal): //cat 继承 Animal
+ def __init__(self, name):
+ self.name = name
+ self.breed ＝ '猫'
+ def cry(self):
+ print '喵喵叫'
+class Dog(Animal):
+ def __init__(self, name):
+ self.name = name
+ self.breed ＝ '狗'
+ def cry(self):
+ print '汪汪叫'
+ 
+# ######### 执行 #########
+c1 = Cat('小白家的小黑猫')
+c1.eat()
+c2 = Cat('小黑的小白猫')
+c2.drink()
+d1 = Dog('胖子家的小瘦狗')
+d1.eat()
+
+多态
+基类的同一个方法再不同派生类对象中具有不同的表现和行为
+一、成员修饰符
+ 共有成员
+ 私有成员, __字段名 - 无法直接访问，只能间接访问
+class Animal(object):
+def __init__(self, name): # Constructor of the class
+self.name = name
+def talk(self): # Abstract method, defined by convention only
+raise NotImplementedError
+("Subclass must implement abstract method")
+class Cat(Animal):
+def talk(self):
+print('%s: 喵喵喵!' %self.name)
+class Dog(Animal):
+def talk(self):
+print('%s: 汪！汪！汪！' %self.name)
+def func(obj): #一个接口，多种形态
+obj.talk()
+c1 = Cat('小晴')
+d1 = Dog('李磊')
+func(c1)
+func(d1)
+二、特殊成员
+ __init__ 类()自动执行
+ __del__ 析构函数，释放对象占用的资源，删除对象和收回对象空间时被
+自动调用和执行
+ __call__ 对象() 类()() 自动执行
+ __int__ int(对象)
+ __str__ str()
+
+ __add__
+1）__dict__ # 讲对象中封装的所有内容通过字典的形式返回
+class Foo:
+ def __init__(self, name,age):
+ self.name = name
+ self.age = age
+ self.n = 123
+# obj = Foo('alex', 18)
+# d = obj.__dict__
+# print(d)
+2） __getitem__ # 切片（slice 类型）或者索引
+class Foo:
+ def __init__(self, name,age):
+ self.name = name
+ self.age = age
+ def __getitem__(self, item):
+ return item+10
+ def __setitem__(self, key, value):
+ print(key,value)
+ def __delitem__(self, key):
+ print(key)
+li = Foo('alex', 18)
+r= li[8] # 自动执行 li 对象的类中的 __getitem__方法，8 当作参数传递给 item
+print(r)
+
+ __setitem__
+ __delitem__
+
+ __iter__
+ # 如果类中有 __iter__ 方法，对象=》可迭代对象
+ # 对象.__iter__() 的返回值： 迭代器
+ # for 循环，迭代器，next
+ # for 循环，可迭代对象，对象.__iter__()，迭代器，next
+ # 1、执行 li 对象的类 F 类中的 __iter__方法，并获取其返回值
+ # 2、循环上一步中返回的对象
+
+三、metaclass,类的祖宗
+ b.
+ class Foo:
+ pass
+
+
+ obj = Foo()
+ # obj 是对象，Foo 类
+ # Foo 类也是一个对象，type 的对象
+ c.
+ 类都是 type 类的对象 type(..)
+ “对象”都是以类的对象 类()
+最后我们总结出领域建模的三字经方法:找名词、加属性、连关系。
+角色:学校、学员、课程、讲师
+要求:
+1. 创建北京、上海 2 所学校
+2. 创建 linux , python , go 3 个课程 ， linux\py 在北京开， go 在上海开
+3. 课程包含，周期，价格，通过学校创建课程
+4. 通过学校创建班级， 班级关联课程、讲师
+5. 创建学员时，选择学校，关联班级
+5. 创建讲师角色时要关联学校，
+6. 提供两个角色接口
+6.1 学员视图， 可以注册， 交学费， 选择班级，
+6.2 讲师视图， 讲师可管理自己的班级， 上课时选择班级， 查看班级学员列表 ， 修
+改所管理的学员的成绩
+6.3 管理视图，创建讲师， 创建班级，创建课程
+7. 上面的操作产生的数据都通过 pickle 序列化保存到文件里
