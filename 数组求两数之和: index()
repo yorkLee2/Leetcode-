@@ -1,0 +1,33 @@
+############################index()
+Python index() 方法从字符串中找出某个子字符串第一个匹配项的索引位置
+该方法与 find() 方法一样，只不过如果子字符串不在字符串中会报一个异常
+
+S1 = "Runoob example....wow!!!"
+S2 = "exam";
+print (S1.index(S2))            输出  7
+print (S1.index(S2, 5))         输出    7
+
+
+给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。
+你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。
+
+Given nums = [2, 7, 11, 15], target = 9,
+Because nums[0] + nums[1] = 2 + 7 = 9,
+return [0, 1].
+
+#分析：找两个数，且满足这两个数相加=9，先遍历其中一个x，定义另一个b=target-a
+
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:    
+        n =len (nums)
+        for x in range(n):
+            a = target - nums[x]
+            if a in nums: 
+                    y = nums.index(a) 
+                    if x == y: 
+                            continue ####保证不重复使用同样的元素
+                    else: 
+                            return x,y 
+                            break
+            else:       
+                   continue 
