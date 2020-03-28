@@ -3,7 +3,10 @@
 
 输入："aabcccccaaa"   输出："a2b1c5a3"
 
-############双指针
+############双指针##########################
+分析：
+处理字符串存在顺序性，依次处理：如果s[i+1]=s[i],计数+1
+
 class Solution:
     def compressString(self, S: str) -> str:
       n = len(S)               #定义字符串长度
