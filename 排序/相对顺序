@@ -1,0 +1,24 @@
+给你两个数组，arr1 和 arr2：
+arr2 中的元素各不相同    arr2 中的每个元素都出现在 arr1 中
+对 arr1 中的元素进行排序，使 arr1 中项的相对顺序和 arr2 中的相对顺序相同。未在 arr2 中出现过的元素需要按照升序放在 arr1 的末尾
+
+输入：arr1 = [2,3,1,3,2,4,6,7,9,2,19], arr2 = [2,1,4,3,9,6]
+输出：[2,2,2,1,4,3,3,9,6,7,19]
+
+#分析：把数组arr1分为两组，一组不在arr1，按照升序排序，很好处理；另一组在arr2中：先统计各个频数,遍历，计算
+class Solution:
+    def relativeSortArray(self, arr1: List[int], arr2: List[int]) -> List[int]:
+        array_not_exist = []   #数组1不在数组2中的
+        exist = []             #数组1中在数组2中的
+        s = set(arr2)
+        ans = []
+        for a in arr1:                 #遍历array1
+            if a in s:                 #如果在数组2中
+                exist.append(a)    
+            else:                      #如果不在数组1中
+                array_not_exist.append(a)   
+        c = collections.Counter(exist)  
+        for a in arr2:
+            ans += [a] * c[a]
+        return ans + sorted(array_not_exist)
+
