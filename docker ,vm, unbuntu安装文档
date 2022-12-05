@@ -4,10 +4,17 @@ Docker
 1.使用脚本自动安装部分不用管，除非不执行前面的
 2.测试docker部分是否安装正确：
    docker run --rm hello-world  ubuntu环境下加sudu
-terminal终端下写
-
-
+3.terminal终端下写
+4. 网络桥接问题：公司内网可能导致
+5. docker镜像问题：
+  https://blog.csdn.net/black0707/article/details/123711451
+  修改配置
+ 
+ 
 unbuntu:
 复制粘贴是： control+ shift+v/c!!!  windows下是直接control+ v/c
 
 https://www.cnblogs.com/resn/p/5800922.html
+
+
+
