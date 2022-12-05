@@ -1,0 +1,13 @@
+
+Docker
+网址：  https://yeasy.gitbook.io/docker_practice/
+1.使用脚本自动安装部分不用管，除非不执行前面的
+2.测试docker部分是否安装正确：
+   docker run --rm hello-world  ubuntu环境下加sudu
+terminal终端下写
+
+
+unbuntu:
+复制粘贴是： control+ shift+v/c!!!  windows下是直接control+ v/c
+
+https://www.cnblogs.com/resn/p/5800922.html
