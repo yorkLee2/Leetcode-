@@ -1,0 +1,6 @@
+re 模块
+match（）：只在字符串开始匹配,也返回匹配到的第一个对象
+   #ret=re.match('asd','asdfhsasd')
+分割：
+re.split( )
+##    ret=re.split('k','djsal')
