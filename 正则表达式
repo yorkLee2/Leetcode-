@@ -4,3 +4,35 @@ match（）：只在字符串开始匹配,也返回匹配到的第一个对象
 分割：
 re.split( )
 ##    ret=re.split('k','djsal')
+
+
+#author_york
+import re
+telNumber='''Suppose my Phone No.is 0535-1234567,yours is 010-12345678,his is 05-87654321.'''
+pattern=re.compile(r'(\d{3,4})-(\d{7,8})')
+index=0
+while True:
+    matchResult=pattern.search(telNumber,index)
+#从指定位置开始匹配
+    if not matchResult:
+        break
+    print('-'* 30)
+    print("Success")
+    for i in range(3):
+        print('Search content:',matchResult.group(i),\
+        'Start from:',matchResult.start(i),'End at:',matchResult.end(i),\
+        'Its span is:',matchResult.span(i))
+    index=matchResult.end(2)
+#从指定下次匹配的开始位置
+
+###output
+Success
+Search content: 0535-1234567 Start from: 23 End at: 35 Its span is: (23, 35)
+Search content: 0535 Start from: 23 End at: 27 Its span is: (23, 27)
+Search content: 1234567 Start from: 28 End at: 35 Its span is: (28, 35)
+------------------------------
+Success
+Search content: 010-12345678 Start from: 45 End at: 57 Its span is: (45, 57)
+Search content: 010 Start from: 45 End at: 48 Its span is: (45, 48)
+Search content: 12345678 Start from: 49 End at: 57 Its span is: (49, 57)
+
