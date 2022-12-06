@@ -1,18 +1,21 @@
 Docker
-概述：
+1.概述：
 Linux® 容器是与系统其他部分隔离开的一个或一组进程。运行这些进程所需的所有文件都由另一个特定镜像提供，意味着从开发到测试再到生产整个过程中，Linux 容器都是可移植且一致的。
 因此，相对于依赖重复传统测试环境的开发渠道，使用容器速度要快得多。容器比较普遍也易于使用，因此也成了 IT 安全方面的重要组成部分  
 为啥需要容器？
   如果你在开发一个应用，开发环境可能需要特定的配置，其他配置环境可能有所不同，而且需要某种特定的库，依赖项和文件有所不同
 容器可以确保您的应用拥有必需的库、依赖项和文件，让您可以在生产中自如地迁移这些应用，无需担心会出现负面影响。
 
-优点： 
+1-1优点： 
 1.但在要求可移植性、可配置性和隔离的情况下，我们可以利用 Linux 容器解决很多难题。Linux 容器的价值在于，它能加速开发并满足新出现的业务需求
 2.在某些情形中（如通过 Apache Kafka 进行实时数据流处理），容器是不可或缺的，因为它们是提供应用所需的可扩展性的唯一途径。
 
+2-1.
 虚拟机和容器的区别：
   1.虚拟化使得您的操作系统（Windows 或 Linux）可同时在单个硬件系统上运行
   2.容器则可共享同一个操作系统内核，将应用进程与系统其他部分隔离开。  Linux 容器具有极佳的可移植性，但前提是它们必须与底层系统兼容
+
+2-2
 Docker镜像和Docker容器区别：
   1. Docker镜像是一个描述容器如何运行的的文件。
   2. Docker容器是 Docker 镜像在运行或被终止时的一个阶段。容器和主机上的其他文件是隔离的。
@@ -21,20 +24,22 @@ Docker镜像和Docker容器区别：
 镜像也包含容器所需要的其他配置项，比如说环境变量、默认运行的命令，以及其他元数据  
 
 
-安装地址：
+3.安装地址：
 网址：  https://yeasy.gitbook.io/docker_practice/
 
 1.使用脚本自动安装部分不用管，除非不执行前面的
 2.测试docker部分是否安装正确：
    docker run --rm hello-world      # ubuntu环境下加sudu
 
+4.
 可能存在的问题：
 4. 网络桥接问题：公司内网可能导致
 5. docker镜像问题：
   https://blog.csdn.net/black0707/article/details/123711451
   修改配置
 
-常见命令：
+5.常见命令：
+
 1.运行docker    
  docker run 是重新生成新的容器，默认模式为attach即附加模式.
  docker start/exect 是重启运行现有的容器，容器在后台运行。
@@ -43,24 +48,19 @@ Docker镜像和Docker容器区别：
  sudo docker run -it [constainerid]      
 #-it是 -i与-t的合并：
    -i是interactive与容器的交互； -t:tty分配一个伪TTY（teletypewriter的缩写）即创建一个终端。
-
+#有两种方法我们可以启动一个容器 - 使用 Docker 镜像的标签(TAG) 或者 镜像 ID(Image ID)。标签指的是一个特定的镜像快照，镜像 ID(Image ID) 是那个镜像对应的唯一识别码。
 
 #/bin/bash：新容器的 BASH shell。这个是可选项。如果你不加 shell 的话，会分配默认的 shell 给容器
  
- 
- 或者 sudo docker 镜像名id
   
-#有两种方法我们可以启动一个容器 - 使用 Docker 镜像的标签(TAG) 或者 镜像 ID(Image ID)。标签指的是一个特定的镜像快照，镜像 ID(Image ID) 是那个镜像对应的唯一识别码。
+
 
 2. 从运用中的容器脱离（你回到了主机终端窗口，但是容器还在后台运行中，没有关掉它）
   CTRL+P 之后CTRL+Q 
 
 3. 查看所有容器  docker ps -a
-   # docker images 查看镜像   docker ps 查看容器
+   docker images 查看镜像   docker ps 查看容器
 
-4. 进入容器：
-     docker exect -it 镜像名id
-4. 查看镜像               docker images 
 5.删除容器   docker rm [容器名称或者id]   （rm:remove)
 6.一次性删除所有容器：
           sudo docker container prune  
@@ -68,6 +68,13 @@ Docker镜像和Docker容器区别：
     sudo docker stop [容器id]
    如果卡住： sudo docker kill [容器id] 
  
+ 
+创建自己的容器，使用DockerFile:
+使用一种称为Dockerfile的文件来描述容器的组成以及相关配置，Dockerfile是docker的特有文件，必须满足相关格式.
+
+
+Docker容器中进行代码调试：
+   原理基本是和stfp传代码的功能是一样，通过映射服务器端口，实现本地修改。
 
 
  
@@ -80,3 +87,6 @@ ubuntu 下：Cuda navidia显卡配置
 安装navidia显卡驱动：
    https://blog.csdn.net/wolfcsharp/article/details/101110239   ----方法1
 
+
+Linux 命令：
+ mkdir:  创建新目录
