@@ -1,5 +1,12 @@
 
+VScode:
+拓展里面安装：Remote-SSH; Remote-SSH: editing configutation files
+
+
 ssh调试网址：
 https://blog.csdn.net/u010000843/article/details/125945595
 
+
+连接格式
 ssh 用户名@主机ip -p 映射的端口号
+一般是 ssh root@[远程主机ip]  -p   映射的端口号
