@@ -1,0 +1,36 @@
+Uvicorn 
+1.使用 uvloop和 httptools实现一个极速的 asyncio 服务器。
+2.实现一个基于 ASGI(异步服务器网关接口)的最小的应用程序接口
+ASGI:
+3.异步网关协议接口，一个介于网络协议服务和 Python 应用之间的标准接口，能够处理多种通用的协议类型，包括 HTTP，HTTP2 和 WebSocket。
+
+async def app(scope, receive, send):
+    assert scope['type'] == 'http'
+    await send({
+        'type': 'http.response.start',
+        'status': 200,
+        'headers': [
+            [b'content-type', b'text/plain'],
+        ]
+    })
+    await send({
+        'type': 'http.response.body',
+        'body': b'Hello, world!',
+    })
+
+
+FastAPI 是一个用于构建 API 的现代、快速（高性能）的 web 框架，使用 Python 3.6+ 并基于标准的 Python 类型提示
+1 快速：可与 NodeJS 和 Go 比肩的极高性能（归功于 Starlette 和 Pydantic）
+  高效编码：提高功能开发速度约 200％ 至 300％
+  更少 bug：减少约 40％ 的人为（开发者）导致错误。
+  智能：极佳的编辑器支持。处处皆可自动补全，减少调试时间
+  简单：设计的易于使用和学习，阅读文档的时间更短
+  简短：使代码重复最小化。通过不同的参数声明实现丰富功能。bug 更少
+  健壮：生产可用级别的代码。还有自动生成的交互式文档
+  标准化：基于（并完全兼容）API 的相关开放标准：OpenAPI (以前被称为 Swagger) 和 JSON Schema。
+ 
+get是从服务器上获取数据，post是向服务器传送数据。
+使用 Get 的时候，参数会显示在地址栏上，而 Post 不会。
+所以，如果这些数据是中文数据而且是非敏感数据，那么使用get；如果用户输入的数据不是中文字符而且包含敏感数据，那么还是使用 post为好。
+ @app.get 
+ @app.post 
