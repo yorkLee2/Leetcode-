@@ -4,6 +4,16 @@ Uvicorn
 ASGI:
 3.异步网关协议接口，一个介于网络协议服务和 Python 应用之间的标准接口，能够处理多种通用的协议类型，包括 HTTP，HTTP2 和 WebSocket。
 
+asyncio 模块最大特点就是，只存在一个线程，跟 JavaScript 一样。
+由于只有一个线程，就不可能多个任务同时运行。
+asyncio 是"多任务合作"模式（cooperative multitasking），允许异步任务交出执行权给其他任务，等到其他任务完成，再收回执行权继续往下执行。
+由于代码的执行权在多个任务之间交换，所以看上去好像多个任务同时运行，其实底层只有一个线程，多个任务分享运行时间
+
+
+
+
+
+
 async def app(scope, receive, send):
     assert scope['type'] == 'http'
     await send({
