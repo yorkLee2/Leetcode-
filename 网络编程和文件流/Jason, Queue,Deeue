@@ -24,7 +24,10 @@ json.dump(dic,f)
 f.close()
 
 
-单线程：没有必要用队列；多线程：用队列
+单线程：没有必要用队列；多线程：用队列。链表是不安全的，先后顺序控制不了。
+队列的作用：维护一把锁
+
+
 Queue:
 q.put(10)
 调用队列对象的put()方法在队尾插入一个项目。put()有两个参数，第一个item为必需的，为插入项目的值；第二个block为可选参数，默认为
@@ -67,25 +70,5 @@ q.put_nowait(item) 相当q.put(item, False)
 q.task_done() 在完成一项工作之后，q.task_done() 函数向任务已经完成的队列发送一个信号
 q.join() 实际上意味着等到队列为空，再执行别的操作
 
-########实例
-import threading,queue
-from time import sleep
-from random import randint
-class Production(threading.Thread):
-    def run(self):
-        while True:
-            r=randint(0,100)
-            q.put(r)
-            print("生产出来%s号包子"%r)
-            sleep(1)
-class Proces(threading.Thread):
-    def run(self):
-        while True:
-            re=q.get()
-            print("吃掉%s号包子"%re)
-if __name__=="__main__":
-    q=queue.Queue(10)
-    threads=[Production(),Production(),Production(),Proces()]
-    for t in threads:
-        t.start()
+
 
