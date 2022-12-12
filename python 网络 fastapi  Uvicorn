@@ -69,3 +69,16 @@ my name is holo,age10
 
 http: 500 默认代表失败;200代表成功地处理了请求
 
+
+Request post方法：
+
+request.post(url,data,json,kwargs)
+data参数支持字典格式和字符串格式，用json.dumps()方法把data转换为合法的json格式字符串
+
+import json
+jsom.dump(data)
+
+
+
+
+
