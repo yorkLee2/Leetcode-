@@ -1,0 +1,60 @@
+assert 
+1）try……except
+try中的代码引发异常，并被except子句捕捉
+则执行except子句中的代码块
+
+注意事项：
+1.Exception要大写
+2.注意缩进
+3. finally字句中的代码总会得到执行
+4. try:可能会引发异常的代码
+5.exception Exception [as reason]:
+  处理异常的代码
+6.finally:
+  无论try字句中代码是否引发异常，都会执行这里的代码
+
+while True:
+    try:
+        # 代码块，逻辑
+        inp = input('请输入序号：')
+        i = int(inp)
+    except Exception as e:
+        # e是Exception对象，对象中封装了错误信息
+        # 上述代码块如果出错，自动执行当前块的内容
+        print(e)
+        i = 1
+    print(i)
+
+2）try……except……else
+
+try
+#可能会引发异常的代码
+escept Exception [as reason]
+#用来处理异常的代码
+else
+#如果try子句中的代码没有异常，就继续执行这里的代码
+def fun():
+    ret = 0
+    try:
+        li = [11, 22]
+        li[1]
+        int('w3r')
+
+    except IndexError as e:
+        print('IndexError',e)
+    except ValueError as e:
+        print('ValueError',e)
+    except Exception as e:
+        print('Exception',e)
+    else:
+        ret = 1
+        print('elese')
+    finally:
+        print('....')
+
+    return ret
+r = fun()
+if r == 0:
+    print('500')
+else:
+    pass
