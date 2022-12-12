@@ -7,6 +7,10 @@ ssh调试网址：
 https://blog.csdn.net/u010000843/article/details/125945595
 
 
+
+
+Mobaxterm里面启动对应容器→sh start_ssh.sh
+
 连接格式
 ssh 用户名@主机ip -p 映射的端口号
 一般是 ssh root@[远程主机ip]  -p   映射的端口号
