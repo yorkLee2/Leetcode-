@@ -1,0 +1,13 @@
+deque 是Python标准库 collections 中的一个类，实现了两端都可以操作的队列，相当于双端队列，与Python的基本数据类型列表很相似。
+
+相比于list实现的队列，deque实现拥有更低的时间和空间复杂度。
+list实现在出队（pop）和插入（insert）时的空间复杂度大约为O(n)，deque在出队（pop）和入队（append）时的时间复杂度是O(1)。
+所以deque更有优越性 而且deque既可以表示队列 又可以表示栈 实在是太方便了
+值得注意的是 deque里边的形式是列表形式；deque是线程安全的，也就是说可以同时从deque集合的左边和右边进行操作而不会有影响
+
+
+>>>q=collections.deque([1,2,3,4,5])
+>>>q.append(q.popleft())
+>>>q
+ 
+deque([2, 3, 4, 5, 1]
