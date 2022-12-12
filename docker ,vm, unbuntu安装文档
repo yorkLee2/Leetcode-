@@ -76,8 +76,8 @@ Docker容器中进行代码调试：
 
  
 unbuntu:
-复制粘贴是： control+ shift+v/c!!!  windows下是直接control+ v/c
-
+1.复制粘贴是： control+ shift+v/c!!!  windows下是直接control+ v/c
+2.各种命令和详细说明：
 https://www.cnblogs.com/resn/p/5800922.html
 
 ubuntu 下：Cuda navidia显卡配置
@@ -87,7 +87,9 @@ ubuntu 下：Cuda navidia显卡配置
 
 Linux 命令：
 创建新目录：  mkdir
-查看ip地址：  sudo ifconfig  
-
-
+查看ip地址：  ifconfig  
+遍历所有目录  ls -R 
+创建多层目录   mkdir -p bb/cc/……   -p
+复制粘贴之前输入的： 上下→ 或者鼠标选中需要复制的一行然后在指定位置右键
+可以看到在什么位置     env  
 
