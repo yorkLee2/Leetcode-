@@ -1,0 +1,57 @@
+ret, frame = cap.read()  参数说明：cap.read()按帧读取视频。 
+ret：返回布尔值Ture/False，如果读取帧是正确的则返回Ture；如果文件读取到结尾，它的返回值就是为False。
+Frame：每一帧的图像，是个三维矩阵。
+
+import cv2
+# 打开内置摄像头，设置成1或者其他值来调用其他摄像头
+cap = cv2.VideoCapture(0)
+ 
+# 确认摄像头是否成功打开
+if cap.isOpened() is False:
+    print("Error")
+    exit(1)
+ 
+while True:
+    ret, frame = cap.read()     # 显示图像帧
+    cv2.imshow('frame', frame)    # cv2.waitKey(1)中的1代表每隔1ms采集一帧，按q键退出采集
+    # 摄像头采集速度一般是30帧~25帧，
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+ 
+cap.release()  # 释放VideoCapture
+cv2.destroyAllWindows()
+
+指定写入视频帧编码格式，函数：
+fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
+
+import cv2
+ 
+# 打开视频文件
+cap = cv2.VideoCapture("./girl.mp4")
+ 
+# 确认视频是否成功打开
+if cap.isOpened() is False:
+    print("error")
+    exit(1)
+ 
+# 获取图片帧宽高
+frame_width = int(cap.get(3))
+frame_height = int(cap.get(4))
+ 
+# 创建保存视频，指定保存视频名称，指定视频编码器，视频帧率，图像帧尺寸
+fourcc = cv2.VideoWriter_fourcc('M', 'J', 'p', 'G')
+out = cv2.VideoWriter("girl_output.avi", fourcc, 30, (frame_width, frame_height))
+ 
+# 读取一帧图像，当视频帧读取完毕ret标识符为False
+ret, frame = cap.read()
+ 
+while ret:
+    cv2.imshow("frame", frame)  # 显示图像帧
+    cv2.waitKey(20)  # 帧间隔为20ms
+    frame = cv2.flip(frame, 0)  # 对图像进行水平翻转，注意这里可以换成其他图像操作
+    out.write(frame)  # 将frame写入视频
+    ret, frame = cap.read()  # 读取下一帧
+ 
+cap.release()  # 释放VideoCapture对象
+out.release()  # 释放保存的VideoWriter对象
+cv2.destroyAllWindows()
