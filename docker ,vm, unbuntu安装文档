@@ -27,11 +27,48 @@ Docker镜像和Docker容器区别：
 3.安装地址：
 网址：  https://yeasy.gitbook.io/docker_practice/
 
-1.使用脚本自动安装部分不用管，除非不执行前面的
+1，操作系统 ubuntu 18.04
+2，支持CUDA的nvidia显卡
+https://blog.csdn.net/wolfcsharp/article/details/101110239
+推荐:  ubuntu-drivers devices        #查看可安装的版本
+       sudo ubuntu-drivers autoinstall
+安装后检测，在终端输入：nvidia-smi，如果出现一个表格，则说明安装成功
+3，cuda 10.2 以上版本
+https://blog.csdn.net/wanzhen4330/article/details/81699769
+4，nvidia-docker
+https://cloud.tencent.com/developer/article/1541709
+
+5，安装识别程序
+四，安装步骤（nvidia jetson nano）
+1，安装CUDA
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/sbsa/cuda-ubuntu1804.pin
+‍
+sudo mv cuda-ubuntu1804.pin /etc/apt/preferences.d/cuda-repository-pin-600
+‍
+wget http://developer.download.nvidia.com/compute/cuda/11.0.2/local_installers/cuda-repo-ubuntu1804-11-0-local_11.0.2-450.51.05-1_arm64.deb
+‍
+sudo dpkg -i cuda-repo-ubuntu1804-11-0-local_11.0.2-450.51.05-1_arm64.deb
+‍
+sudo apt-key add /var/cuda-repo-ubuntu1804-11-0-local/7fa2af80.pub
+sudo apt-get update
+‍
+sudo apt-get -y install cuda
+如果安装报错，则使用
+sudo apt-get -o dpkg::Options::="--force-overwrite" install --fix-broken
+安装完成后验证：
+dpkg -l | grep cuda
+全局配置：
+sudo vim ~/.bashrc
+在最后添加
+export CUBA_HOME=/usr/local/cuda-11.0
+export LD_LIBRARY_PATH=/usr/local/cuda-11.0/lib64:$LD_LIBRARY_PATH
+export PATH=/usr/local/cuda-11.0/bin:$PATH
+保存后
+source ~/.bashrc
+
+
 2.测试docker部分是否安装正确：
    docker run --rm hello-world      # ubuntu环境下加sudu
-
-4.
 可能存在的问题：
 4. 网络桥接问题：公司内网可能导致
 5. docker镜像问题：
