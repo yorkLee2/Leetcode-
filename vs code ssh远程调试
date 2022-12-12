@@ -1,7 +1,8 @@
-
 VScode:
-拓展里面安装：Remote-SSH; Remote-SSH: editing configutation files
-
+1.拓展里面安装：Remote-SSH; Remote-SSH: editing configutation files两个模块
+2.连接格式     ssh 用户名@主机ip -p 映射的端口号
+  一般情况下是： ssh root@[远程主机ip]  -p   映射的端口号
+3. 记得启动docker且docker的ssh服务： Mobaxterm里面启动对应容器→ service ssh start
 
 ssh调试网址：
 https://blog.csdn.net/u010000843/article/details/125945595
@@ -9,8 +10,5 @@ https://blog.csdn.net/u010000843/article/details/125945595
 
 
 
-Mobaxterm里面启动对应容器→sh start_ssh.sh
 
-连接格式
-ssh 用户名@主机ip -p 映射的端口号
-一般是 ssh root@[远程主机ip]  -p   映射的端口号
+
