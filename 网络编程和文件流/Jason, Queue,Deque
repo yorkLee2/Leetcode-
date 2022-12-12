@@ -2,6 +2,11 @@ json：
    如果我们要在不同的编程语言之间传递对象，就必须把对象序列化为标准格式，比如XML，但更好的方法是序列化为JSON，因为JSON表示出来就是一个字符串可以被所有语言读取，也可以方便地存储到磁盘或者通过网络传输。JSON不仅是标准格式，并且比XML更快，而且可以直接在Web页面中读取，非常方便
 不能将更高级的如函数转换为json格式。
 
+1.“名称/值”对的集合（A collection of name/value pairs）。不同的语言中，它被理解为对象（object），纪录（record），
+结构（struct），字典（dictionary），哈希表（hash table），有键列表（keyed list），或者关联数组 （associative array）
+2.值的有序列表（An ordered list of values）。在大部分语言中，它被理解为数组（array）
+
+
 #写入
 import json
 dic={'name':'alex','age':'18'}
