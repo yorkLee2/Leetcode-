@@ -13,6 +13,15 @@ try中的代码引发异常，并被except子句捕捉
 6.finally:
   无论try字句中代码是否引发异常，都会执行这里的代码
 
+python中用于处理异常栈的模块是traceback模块，它提供了print_exception、format_exception等输出异常栈等常用的工具函数。
+程序出现异常，如何快速定位哪里错误。目的是为了提高程序的健壮性，
+
+
+
+
+
+
+
 while True:
     try:
         # 代码块，逻辑
