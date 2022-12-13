@@ -90,3 +90,27 @@ Deque是Python标准库 collections 中的一个类，实现了两端都可以�
  
 deque([2, 3, 4, 5, 1]
 
+
+
+pydantic库：
+是一种常用的用于数据接口schema定义与检查的库。
+通过pydantic库，我们可以更为规范地定义和使用数据接口，这对于大型项目的开发将会更为友好。
+当然，除了pydantic库之外，像是valideer库、marshmallow库、trafaret库以及cerberus库等都可以完成相似的功能，但是相较之下，pydantic库的执行效率会更加优秀一些。
+pydantic库的数据定义方式是通过BaseModel类来进行定义的，所有基于pydantic的数据类型本质上都是一个BaseModel类，它最基本的使用方式如下。
+from pydantic import BaseModel
+class User(BaseModel):
+    id: int
+    name = 'Jane Doe'
+
+dict() 模型字段和值的字典                       json() JSON 字符串表示dict()
+copy() 模型的副本（默认为浅表副本）              parse_obj() 使用dict解析数据
+parse_raw 将str或bytes并将其解析为json，然后将结果传递给parse_obj
+parse_file 文件路径，读取文件并将内容传递给parse_raw。如果content_type省略，则从文件的扩展名推断
+from_orm() 从ORM 对象创建模型                  schema() 返回模式的字典
+schema_json() 返回该字典的 JSON 字符串表示      construct() 允许在没有验证的情况下创建模型
+fields_set 初始化模型实例时设置的字段名称集      fields 模型字段的字典
+config 模型的配置类
+
+
+
+
