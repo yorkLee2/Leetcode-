@@ -1,11 +1,8 @@
 装饰器本质上是Pyhon函数，可以让其他函数在不需要做任何代码变动情况下增加额外功能
 装饰器的返回值是一个函数对象，经常用于切片需求的场景.
-       插入日志，性能测试，事务处理，缓存，权限校验等场景。
-       可以抽离出大量与函数功能本身无关的雷同代码并继续重用。
-    应用场景：
-            京东每次的验证会员用户界面
+插入日志，性能测试，事务处理，缓存，权限校验等场景。可以抽离出大量与函数功能本身无关的雷同代码并继续重用。
+   应用场景：京东每次的验证会员用户界面
 
-For instance:
 
 import datetime
 
@@ -34,3 +31,65 @@ def f4():
 f1()
 f2()
 f3()
+
+
+######统计n以内的质数之和
+def get_prime_sum(n):
+    sum = 0
+    for i in range(2, n+1):
+        flag = True
+        for j in range(2, i):
+            if i % j == 0:
+                flag = False
+                break
+        if flag:
+            sum += i
+    return sum
+
+####output:
+print(get_prime_sum(5))
+10
+
+#上面的函数中，当 n 发生变化时，函数返回值及执行耗时是不一样的，
+如果需要打印日志，如该函数的方法名、注释内容、入参、返回值和执行耗时，那么我们一般可能会这样做
+def 装饰器名(func):
+    def wrapper(*args, **kwargs):
+        ...  # 编写额外功能的代码
+        return func(*args, **kwargs)
+    return wrapper
+
+import time
+def log(func):
+    def wrapper(*args, **kwargs):
+        time1 = time.time()
+        res = func(*args, **kwargs)
+        time2 = time.time()
+        print("函数名：{}".format(func.__name__))
+        print("入参 args ：{}".format(args))
+        print("入参 kwargs ：{}".format(kwargs))
+        print("返回值：{}".format(res))
+        print("函数执行耗时：{:.8f}".format(time2 - time1))
+        return res
+    return wrapper
+
+
+@log
+####源程序前面加了了一个@
+def get_prime_sum(n):
+    sum = 0
+    for i in range(2, n + 1):
+        flag = True
+        for j in range(2, i):
+            if i % j == 0:
+                flag = False
+                break
+        if flag:
+            sum += i
+    return sum
+
+传参数参考：
+https://www.cnblogs.com/wintest/p/16273468.html
+
+
+
+
