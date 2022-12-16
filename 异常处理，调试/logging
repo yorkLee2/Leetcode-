@@ -1,0 +1,12 @@
+
+https://www.cnblogs.com/CJOKER/p/8295272.html
+https://www.cnblogs.com/MrFiona/p/5978898.html
+用途：
+      记录日志非常重要。银行转账时会有转账记录；飞机飞行过程中，会有黑盒子（飞行数据记录器）记录飞行过程中的一切。
+      如果有出现什么问题，人们可以通过日志数据来搞清楚到底发生了什么。
+      对于系统开发、调试以及运行，记录日志都是同样的重要。
+      如果没有日志记录，程序崩溃时你几乎就没办法弄明白到底发生了什么事情.
+并且日志包含的信息即有正常的程序访问日志，还可能有错误、警告等信息输出，python的logging模块提供了标准的日志接口，
+你可以通过它存储各种格式的日志，logging的日志可以分为 debug(), info(), warning(), error() and critical() 5个级别
+日志级别等级CRITICAL > ERROR > WARNING > INFO > DEBUG > NOTSET），默认的日志格式为日志级别：Logger名称：用户输出消息。
+
