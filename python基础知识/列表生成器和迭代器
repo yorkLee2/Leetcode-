@@ -31,7 +31,6 @@ ok2
 def squared(x):
     return x*x
 multiples = [squared(i) for i in range(30) if i % 3 is 0]
-
 print (multiples)
 
 #output:
