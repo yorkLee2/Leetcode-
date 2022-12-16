@@ -86,6 +86,51 @@ if __name__=='__main__':
 import threading
 import time
 　　
+class MyThread(threading.Thread):
+    def __init__(self,num):
+        threading.Thread.__init__(self)
+        self.num = num
+ 
+    def run(self):#定义每个线程要运行的函数
+ 
+        print("running on number:%s" %self.num)
+ 
+        time.sleep(3)
+ 
+if __name__ == '__main__':
+ 
+    t1 = MyThread(1)
+    t2 = MyThread(2)
+    t1.start()
+    t2.start()
+
+########output:
+running on number:1
+running on number:2
+
+
+from threading import Thread
+import time
+def func1(x, y):
+    for i in range(x, y):
+        print(i, end='')
+    print()
+    time.sleep(10)
+
+t1 = Thread(target=func1, args=(15, 20))
+t1.start()
+t1.join(5)
+#首先 先输出15-20的整数，然后程序暂停5s
+t2 = Thread(target=func1, args=(5, 10))
+t2.start()
+#继续输出整数，t1.join(5)若删去，则并发进行,time.sleep  阻塞当前线程
+
+###########output:
+1516171819
+56789
+
+
+
 
 注意：
 1>进程是资源分配的最小单位,线程是CPU调度的最小单位. 　　　　　
