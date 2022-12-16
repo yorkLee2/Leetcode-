@@ -1,12 +1,27 @@
 re 模块
 match（）：只在字符串开始匹配,也返回匹配到的第一个对象
    #ret=re.match('asd','asdfhsasd')
-分割：
-re.split( )
-##    ret=re.split('k','djsal')
 
 
-#author_york
+1.分割：
+re.split(pattern, string, maxsplit=0, flags)
+pattern：相当于str.split()中的sep，分隔符的意思，不但可以是字符串，也可以为正则表达式.
+比如: '[ab]'，表示的意思就是取a和b的任意一个值
+string: 要进行分割的字符串
+maxsplit: 分割的最大次数，默认值为0，表示无限分割，表示为负数不分割。
+
+s = '1,2,3,4,a,5,6,7,8,b,9,10,11,12' 
+re.split(',[a-b],', s, maxsplit=0)   #['1,2,3,4', '5,6,7,8', '9,10,11,12']
+
+[a-z] 字符范围。匹配指定范围内的任意字符,例如a-b 可以匹配到任意小写字母字符
+
+2. findall(pattern, string, flags=0)
+
+表达式 .* 单个字符匹配任意次，即贪婪匹配。
+表达式 .*? 是满足条件的情况只匹配一次，即懒惰匹配
+
+
+
 import re
 telNumber='''Suppose my Phone No.is 0535-1234567,yours is 010-12345678,his is 05-87654321.'''
 pattern=re.compile(r'(\d{3,4})-(\d{7,8})')
