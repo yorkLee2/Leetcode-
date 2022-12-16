@@ -1,0 +1,90 @@
+
+锁技术：
+多个线程都在同时操作同一个共享资源，所以造成了资源破坏，怎么办呢？
+有同学会想用join呗，但join会把整个线程给停住，造成了串行，失去了多线程的意义，而我们只需要把计算(涉及到操作公共数据)的时候串行执行。
+我们可以通过同步锁来解决这种问题
+http://c.biancheng.net/view/2617.html
+
+unlock()      acquire   locked
+lock()        release    
+可重入锁：
+为了支持在同一线程中多次请求同一资源，python提供了“可重入锁”：threading.RLock。RLock内部维护着一个Lock和一个counter变量，counter记录了acquire的次数，
+从而使得资源可以被多次acquire。直到一个线程所有的acquire都被release，其他的线程才能获得资源。
+
+协程 Coroutine。协程是一种用户态的轻量级线程。
+协程拥有自己的寄存器上下文和栈。协程调度切换时，将寄存器上下文和栈保存到其他地方，在切回来的时候，恢复先前保存的寄存器上下文和栈。因此：
+
+协程能保留上一次调用时的状态（即所有局部状态的一个特定组合），每次过程重入时，就相当于进入上一次调用的状态，
+换种说法：进入上一次离开时所处逻辑流的位置。
+
+1.必须在只有一个单线程里实现并发
+2.修改共享数据不需加锁
+3.用户程序里自己保存多个控制流的上下文栈
+4.一个协程遇到IO操作自动切换到其它协程 
+
+协程的好处：
+无需线程上下文切换的开销；无需原子操作锁定及同步的开销
+"原子操作(atomic operation)是不需要synchronized"，所谓原子操作是指不会被线程调度机制打断的操作；
+这种操作一旦开始，就一直运行到结束，中间不会有任何 context switch （切换到另一个线程）。
+原子操作可以是一个步骤，也可以是多个操作步骤，但是其顺序是不可以被打乱，或者切割掉只执行部分。视作整体是原子性的核心。
+方便切换控制流，简化编程模型
+高并发+高扩展性+低成本：一个CPU支持上万的协程都不是问题。所以很适合用于高并发处理。
+ 
+
+drawback: 
+无法利用多核资源：协程的本质是个单线程,它不能同时将 单个CPU 的多个核用上,协程需要和进程配合才能运行在多CPU上.
+当然我们日常所编写的绝大部分应用都没有这个必要，除非是cpu密集型应用。
+进行阻塞（Blocking）操作（如IO时）会阻塞掉整个程序
+
+
+import time
+import queue
+def consumer(name):
+    print("--->starting eating baozi...")
+    while True:
+        new_baozi = yield
+        print("[%s] is eating baozi %s" % (name,new_baozi))
+        #time.sleep(1)
+ 
+def producer():
+ 
+    r = con.__next__()
+    r = con2.__next__()
+    n = 0
+    while n < 5:
+        n +=1
+        con.send(n)
+        con2.send(n)
+        print("\033[32;1m[producer]\033[0m is making baozi %s" %n )
+ 
+ 
+if __name__ == '__main__':
+    con = consumer("c1")
+    con2 = consumer("c2")
+    p = producer()
+	
+Greenlet
+greenlet是一个用C实现的协程模块，相比与python自带的yield，它可以使你在任意函数之间随意切换，而不需把这个函数先声明为generator
+from greenlet import greenlet
+ 
+#switch 是切换
+def test1():
+    print(12)
+    gr2.switch()
+    print(34)
+    gr2.switch()
+ 
+ 
+def test2():
+    print(56)
+    gr1.switch()
+    print(78)
+ 
+ 
+gr1 = greenlet(test1)
+gr2 = greenlet(test2)
+gr1.switch()
+
+
+Gevent 是一个第三方库，可以轻松通过gevent实现并发同步或异步编程，在gevent中用到的主要模式是Greenlet, 
+它是以C扩展模块形式接入Python的轻量级协程。 Greenlet全部运行在主程序操作系统进程的内部，但它们被协作式地调度。
