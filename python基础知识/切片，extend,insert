@@ -5,23 +5,6 @@
 b=a[3::-1]
 print(b)    #['sanpang', 'xiaohu', 'jinxin', 'wuchao']
 
-
-
-#添加 append insert
-
-# a.append('xuepeng')  #默认插到最后一个位置
-# print(a)
-# a.insert(1,'xuepeng') #将数据插入到任意一个位置
-# print(a)
-
-#修改
-#
-# a[1]='haidilao'
-# print(a)
-# a[1:3]=['a','b']
-# print(a)
-
-
 #删除 remove pop del
 
 # a.remove(a[0])
