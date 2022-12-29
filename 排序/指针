@@ -1,20 +1,3 @@
-#######################append函数
-append()函数用于在列表末尾添加新的对象。
-
-#list = ['abc','Harden','python','Curry',123];  list.append(2009);  print('list(updated):',list)
-#输出  ['abc','Harden','python','Curry',123,2009]
-
-#####################sorted 函数
-list.sort( key=None, reverse=False)
-reverse -- 排序规则，reverse = True 降序， reverse = False 升序（默认）
-
-
-该函数也含有reverse这个bool类型的参数，当reverse=False时：为正向排序(从小到大)；当reverse=True时：为反向排序(从大到小)。当然默认为False。
-执行完后会有返回一个新排序好的list
-
-sorted()不会改变原来的list，而是会返回一个新的已经排序好的list
-list.sort()方法仅仅被list所定义，sorted()可用于任何一个可迭代对象
-
 1.给定两个字符串 s1 和 s2，请编写一个程序，确定其中一个字符串的字符重新排列后，能否变成另一个字符串。
 
 输入: s1 = "abc", s2 = "bca"      输出: true 
@@ -35,32 +18,6 @@ tip:
 class Solution:
     def CheckPermutation(self, s1: str, s2: str) -> bool:
         return sorted(s1)==sorted(s2)
-
-
-给定两个数组，编写一个函数来计算它们的交集
-输入: nums1 = [1,2,2,1], nums2 = [2,2]
-输出: [2,2]
-
-
-分析：先排序→后双指针比较:对应元素相同，加入到新的列表，不同：
-[1,1,2,2]  [2,2]
-
-
-def intersect(self, nums1: List[int], nums2: List[int]) -> List[int]:
-        nums1.sort()
-        nums2.sort()
-        r = []
-        i = j = 0
-        while i < len(nums1) and j < len(nums2):
-            if nums1[i] == nums2[j]:
-                r.append(nums1[i])
-                i += 1
-                j += 1
-            elif nums1[i] < nums2[j]:
-                i += 1
-            else:
-                j += 1
-        return r
 
 
 给定一个非负整数数组 A， A 中一半整数是奇数，一半整数是偶数。
