@@ -21,10 +21,6 @@ print(b)    #['sanpang', 'xiaohu', 'jinxin', 'wuchao']
 # print(a)
 
 
-#count:计算某元素出现次数
-# t=['to', 'be', 'or', 'not', 'to', 'be'].count('to')
-# print(t)
-
 #extend
 # a = [1, 2, 3]
 # b = [4, 5, 6]
