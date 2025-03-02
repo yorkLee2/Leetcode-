@@ -1,40 +1,59 @@
 import os
 import random
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
+from torch.utils.data import Dataset, DataLoader
 from sklearn.metrics import f1_score
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+import torchaudio
+import numpy as np
+from transformers import Wav2Vec2Model
 
-# 设置设备和特征数据文件路径
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-FEATURES_FILE = "audio_features.pth"  # 该文件应包含 "train" 和 "val" 键
+FEATURES_FILE = "audio_features.pth"
 
-# SpecAugment：对输入特征（如Mel谱图）随机进行时间和频率掩码（数据增强）
-def spec_augment(feature, time_mask_param=8, freq_mask_param=8, num_time_masks=2, num_freq_masks=2):
-    # feature: numpy array或Tensor，形状 [feature_dim, time_steps]
-    if isinstance(feature, torch.Tensor):
-        feature = feature.clone().detach().cpu().numpy()
-    augmented = feature.copy()
-    num_mel_channels, num_frames = augmented.shape
+# ============== 数据增强相关选项 ==============
+AUDIO_TIME_SHIFT = True   # 是否启用随机时间偏移
+MAX_SHIFT = 1600          # ~0.1秒(以16kHz为采样率)
+NOISE_FACTOR = 0.005      # 随机噪声系数
 
-    # 时间掩码
-    for _ in range(num_time_masks):
-        t = random.randrange(0, time_mask_param)
-        t0 = random.randrange(0, max(1, num_frames - t))
-        augmented[:, t0:t0+t] = 0
+# SpecAugment 参数
+SPEC_TIME_MASKS = 1
+SPEC_FREQ_MASKS = 1
+TIME_MASK_PARAM = 15   # 遮挡多少帧
+FREQ_MASK_PARAM = 8    # 遮挡多少个频带
 
-    # 频率掩码
+def add_noise(waveform, noise_factor=NOISE_FACTOR):
+    noise = torch.randn_like(waveform)
+    return waveform + noise_factor * noise
+
+def time_shift(waveform, max_shift=MAX_SHIFT):
+    shift = random.randint(-max_shift, max_shift)
+    if shift > 0:
+        waveform = torch.cat([waveform[shift:], torch.zeros(shift, device=waveform.device)], dim=0)
+    elif shift < 0:
+        shift = abs(shift)
+        waveform = torch.cat([torch.zeros(shift, device=waveform.device), waveform[:-shift]], dim=0)
+    return waveform
+
+def spec_augment(mfcc, time_mask_param=TIME_MASK_PARAM, freq_mask_param=FREQ_MASK_PARAM,
+                 num_time_masks=SPEC_TIME_MASKS, num_freq_masks=SPEC_FREQ_MASKS):
+    """
+    对 [batch, n_mfcc, time] 的 MFCC 做简单的时间遮挡 / 频率遮挡
+    """
+    # mfcc: [n_mfcc, time]
+    n_mfcc, time_steps = mfcc.shape
+    # 频率遮挡
     for _ in range(num_freq_masks):
-        f = random.randrange(0, freq_mask_param)
-        f0 = random.randrange(0, max(1, num_mel_channels - f))
-        augmented[f0:f0+f, :] = 0
+        f0 = random.randint(0, n_mfcc - freq_mask_param)
+        mfcc[f0:f0 + freq_mask_param, :] = 0
+    # 时间遮挡
+    for _ in range(num_time_masks):
+        t0 = random.randint(0, time_steps - time_mask_param)
+        mfcc[:, t0:t0 + time_mask_param] = 0
+    return mfcc
 
-    return torch.tensor(augmented, dtype=torch.float32)
-
-# 自定义数据集：支持数据增强（仅在训练时开启）
 class AudioDataset(Dataset):
     def __init__(self, data_list, augment=False):
         self.data_list = data_list
@@ -45,64 +64,141 @@ class AudioDataset(Dataset):
 
     def __getitem__(self, idx):
         item = self.data_list[idx]
-        feature = item["feature_matrix"]
-        label = item["label"] - 1  # 标签从 0 开始
-        if not isinstance(feature, torch.Tensor):
-            feature = torch.tensor(feature, dtype=torch.float32)
-        # 若开启数据增强，则对输入特征（如Mel谱图）进行 SpecAugment
+        waveform = item["waveform"]  # 1D, shape [num_samples]
+        label = item["label"] - 1    # 转为0-based
+
         if self.augment:
-            feature = spec_augment(feature)
-        return feature, label
+            # 50% 概率加噪
+            if random.random() < 0.5:
+                waveform = add_noise(waveform)
+            # 50% 概率时间偏移
+            if AUDIO_TIME_SHIFT and random.random() < 0.5:
+                waveform = time_shift(waveform)
 
-# 定义基于 CNN + Transformer Encoder 的模型
-class AudioClassifierCNNTransformer(nn.Module):
-    def __init__(self, feature_dim, num_classes, d_model=128, num_conv_channels=64,
-                 num_transformer_layers=2, nhead=4, dropout=0.5):
-        super(AudioClassifierCNNTransformer, self).__init__()
-        # CNN部分：两层卷积，输出维度为 d_model
-        self.conv1 = nn.Conv1d(in_channels=feature_dim, out_channels=num_conv_channels, kernel_size=3, padding=1)
-        self.bn1 = nn.BatchNorm1d(num_conv_channels)
-        self.conv2 = nn.Conv1d(in_channels=num_conv_channels, out_channels=d_model, kernel_size=3, padding=1)
-        self.bn2 = nn.BatchNorm1d(d_model)
-        self.relu = nn.ReLU()
-        self.pool = nn.MaxPool1d(kernel_size=2)
+        return waveform, label
 
-        # Transformer Encoder部分：输入为 [time, batch, d_model]
-        encoder_layer = nn.TransformerEncoderLayer(d_model=d_model, nhead=nhead, dropout=dropout)
-        self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_transformer_layers)
-
-        self.dropout = nn.Dropout(dropout)
-        self.fc = nn.Linear(d_model, num_classes)
+# ============== 自注意力池化(Wav2Vec2输出) ==============
+class SelfAttentionPool(nn.Module):
+    def __init__(self, input_dim):
+        super(SelfAttentionPool, self).__init__()
+        self.attn = nn.Linear(input_dim, 1)
 
     def forward(self, x):
-        # x: [batch, feature_dim, time_steps]
-        x = self.conv1(x)      # -> [batch, num_conv_channels, time_steps]
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.pool(x)       # -> [batch, num_conv_channels, time_steps/2]
+        # x: [batch, time, dim]
+        attn_weights = torch.softmax(self.attn(x), dim=1)  # [batch, time, 1]
+        pooled = torch.sum(x * attn_weights, dim=1)        # [batch, dim]
+        return pooled
 
-        x = self.conv2(x)      # -> [batch, d_model, time_steps/2]
-        x = self.bn2(x)
-        x = self.relu(x)
-        x = self.pool(x)       # -> [batch, d_model, time_steps/4]
+# ============== 多分辨率MFCC(40 & 80) + 1D卷积 + SpecAugment ==============
+class MFCCBranch(nn.Module):
+    """
+    每个分辨率MFCC都用类似的结构:
+      - MFCC提取
+      - (可选) SpecAugment
+      - 全局均值分支 + 卷积分支
+      - 残差加和得到 128维
+    """
+    def __init__(self, sample_rate, n_mfcc=40):
+        super(MFCCBranch, self).__init__()
+        self.n_mfcc = n_mfcc
+        self.mfcc_transform = torchaudio.transforms.MFCC(
+            sample_rate=sample_rate,
+            n_mfcc=n_mfcc,
+            melkwargs={
+                "n_fft": 400,
+                "hop_length": 160,
+                "n_mels": n_mfcc,
+                "center": False,
+            }
+        )
+        # 全局均值分支
+        self.fc_global = nn.Linear(n_mfcc, 128)
+        # 卷积分支
+        self.conv = nn.Sequential(
+            nn.Conv1d(in_channels=n_mfcc, out_channels=64, kernel_size=3, padding=1),
+            nn.BatchNorm1d(64),
+            nn.ReLU(),
+            nn.Conv1d(in_channels=64, out_channels=128, kernel_size=3, padding=1),
+            nn.BatchNorm1d(128),
+            nn.ReLU(),
+            nn.AdaptiveAvgPool1d(1)  # [batch, 128, 1]
+        )
 
-        # Transformer Encoder要求输入形状 [time, batch, d_model]
-        x = x.transpose(1, 2)  # -> [batch, time_steps/4, d_model]
-        x = x.transpose(0, 1)  # -> [time_steps/4, batch, d_model]
-        x = self.transformer_encoder(x)  # -> [time_steps/4, batch, d_model]
-        # 聚合：取时间步均值
-        x = x.mean(dim=0)      # -> [batch, d_model]
-        x = self.dropout(x)
-        logits = self.fc(x)    # -> [batch, num_classes]
+    def forward(self, waveform, apply_specaug=False):
+        """
+        waveform: [batch, num_samples]
+        return: [batch, 128] -> 融合全局 & 卷积特征
+        """
+        mfcc = self.mfcc_transform(waveform)  # [batch, n_mfcc, time]
+
+        # 如果需要SpecAugment，可以在 batch 维度遍历，对每条MFCC做随机遮挡
+        if apply_specaug and self.training:
+            # mfcc[i]: shape [n_mfcc, time]
+            for i in range(mfcc.size(0)):
+                mfcc[i] = spec_augment(mfcc[i])
+
+        # 全局均值
+        mfcc_mean = mfcc.mean(dim=-1)               # [batch, n_mfcc]
+        global_feat = torch.relu(self.fc_global(mfcc_mean))  # [batch, 128]
+
+        # 卷积分支
+        conv_feat = self.conv(mfcc)  # [batch, 128, 1]
+        conv_feat = conv_feat.squeeze(-1)  # [batch, 128]
+
+        # 残差加和
+        feat_128 = global_feat + conv_feat
+        return feat_128
+
+# ============== 主模型：完全冻结 Wav2Vec2 + 多分辨率MFCC ==============
+class AudioClassifierFusion(nn.Module):
+    def __init__(self, num_classes=25, freeze_feature_extractor=True):
+        super(AudioClassifierFusion, self).__init__()
+
+        # ----------- Wav2Vec2 (完全冻结) -----------
+        self.wav2vec2 = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-base")
+        if freeze_feature_extractor and hasattr(self.wav2vec2, "feature_extractor"):
+            for param in self.wav2vec2.feature_extractor.parameters():
+                param.requires_grad = False
+
+        hidden_dim = self.wav2vec2.config.hidden_size  # 768
+        self.attn_pool = SelfAttentionPool(hidden_dim)
+
+        # ----------- 多分辨率 MFCC 分支 -----------
+        self.mfcc_branch_40 = MFCCBranch(sample_rate=16000, n_mfcc=40)
+        self.mfcc_branch_80 = MFCCBranch(sample_rate=16000, n_mfcc=80)
+
+        # 两个分支各输出128维 → total 256维
+        # 再和 Wav2Vec2(768) 融合 → 768 + 256 = 1024
+        fusion_dim = hidden_dim + 256
+        self.dropout = nn.Dropout(0.3)
+        self.fc = nn.Linear(fusion_dim, num_classes)
+
+    def forward(self, waveform):
+        # Wav2Vec2 分支
+        with torch.no_grad():
+            outputs = self.wav2vec2(waveform)
+        wav2vec_feats = self.attn_pool(outputs.last_hidden_state)  # [batch, 768]
+
+        # MFCC 分支 (多分辨率)
+        #   训练时对其中一个或两个都做 SpecAugment(可自行调节)
+        mfcc_40 = self.mfcc_branch_40(waveform, apply_specaug=True)
+        mfcc_80 = self.mfcc_branch_80(waveform, apply_specaug=True)
+
+        # 拼接
+        mfcc_merged = torch.cat([mfcc_40, mfcc_80], dim=1)  # [batch, 256]
+
+        # 最终融合
+        fused = torch.cat([wav2vec_feats, mfcc_merged], dim=1)  # [batch, 768+256=1024]
+        fused = self.dropout(fused)
+        logits = self.fc(fused)  # [batch, num_classes]
         return logits
 
 def main():
-    # 加载特征数据（必须包含 "train" 和 "val"）
+    # 1. 加载音频特征数据
     data = torch.load(FEATURES_FILE)
     train_data = data["train"]
     val_data = data["val"]
 
-    # 开启数据增强仅在训练集使用
     train_dataset = AudioDataset(train_data, augment=True)
     val_dataset = AudioDataset(val_data, augment=False)
 
@@ -110,80 +206,74 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
-    # 获取输入特征维度（feature_dim），即第一维大小
-    sample_feature, _ = train_dataset[0]
-    feature_dim = sample_feature.shape[0]
-
+    # 2. 初始化模型
     num_classes = 25
-    # 这里d_model为Transformer的输入维度，建议与特征维度适当匹配
-    d_model = 128
-    num_transformer_layers = 2
-    nhead = 4
-    dropout = 0.5
+    model = AudioClassifierFusion(num_classes=num_classes, freeze_feature_extractor=True).to(DEVICE)
 
-    model = AudioClassifierCNNTransformer(feature_dim, num_classes, d_model=d_model,
-                                            num_conv_channels=64,
-                                            num_transformer_layers=num_transformer_layers,
-                                            nhead=nhead, dropout=dropout)
-    model.to(DEVICE)
-
+    # 3. 优化器 & 调度器 (与原代码保持一致)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-4)
-    scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=10, verbose=True)
-    num_epochs = 200
+    optimizer = optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)
+    scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=5, verbose=True)
+
+    num_epochs = 50
     best_val_f1 = 0.0
 
+    # 4. 训练循环
     for epoch in range(num_epochs):
         model.train()
         running_loss = 0.0
-        train_preds = []
-        train_labels = []
-        for features, labels in train_loader:
-            features = features.to(DEVICE)  # [batch, feature_dim, time_steps]
-            if not isinstance(labels, torch.Tensor):
-                labels = torch.tensor(labels)
+        train_preds, train_labels = [], []
+
+        for waveforms, labels in train_loader:
+            waveforms = waveforms.to(DEVICE)
             labels = labels.to(DEVICE)
+
             optimizer.zero_grad()
-            outputs = model(features)
+            outputs = model(waveforms)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
-            running_loss += loss.item() * features.size(0)
+
+            running_loss += loss.item() * waveforms.size(0)
             _, preds = torch.max(outputs, 1)
             train_preds.extend(preds.cpu().numpy())
             train_labels.extend(labels.cpu().numpy())
+
         train_loss = running_loss / len(train_dataset)
         train_f1 = f1_score(train_labels, train_preds, average='macro')
 
+        # ===== 验证 =====
         model.eval()
-        val_preds = []
-        val_labels = []
         val_loss = 0.0
+        val_preds, val_labels = [], []
+
         with torch.no_grad():
-            for features, labels in val_loader:
-                features = features.to(DEVICE)
-                if not isinstance(labels, torch.Tensor):
-                    labels = torch.tensor(labels)
+            for waveforms, labels in val_loader:
+                waveforms = waveforms.to(DEVICE)
                 labels = labels.to(DEVICE)
-                outputs = model(features)
+                outputs = model(waveforms)
                 loss = criterion(outputs, labels)
-                val_loss += loss.item() * features.size(0)
+                val_loss += loss.item() * waveforms.size(0)
                 _, preds = torch.max(outputs, 1)
                 val_preds.extend(preds.cpu().numpy())
                 val_labels.extend(labels.cpu().numpy())
+
         val_loss /= len(val_dataset)
         val_f1 = f1_score(val_labels, val_preds, average='macro')
 
-        # 根据验证 F1 更新学习率
+        # 调整LR
         scheduler.step(val_f1)
-
         if val_f1 > best_val_f1:
             best_val_f1 = val_f1
             torch.save(model.state_dict(), "audio_model_best.pth")
-        print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {train_loss:.4f}, Train F1-Score: {train_f1:.4f}, Validation F1-Score: {val_f1:.4f}")
+
+        print(f"Epoch [{epoch+1}/{num_epochs}], "
+              f"Train Loss: {train_loss:.4f}, Train F1: {train_f1:.4f}, "
+              f"Val F1: {val_f1:.4f}")
 
     torch.save(model.state_dict(), "audio_model_final.pth")
-    print("✅ 模型训练完成，已保存最佳模型至 audio_model_best.pth 和最终模型至 audio_model_final.pth")
+    print("✅ Training complete. Best Val F1:", best_val_f1)
 
 if __name__ == "__main__":
     main()
+
